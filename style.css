@@ -42,23 +42,59 @@ h1 {
     background: #F57C00;
 }
 
+#tree-area {
+    position: relative;
+    width: 420px;        /* 基準幅（UIはここ基準） */
+    height: 520px;       /* grid基準の高さ */
+    margin: 0 auto;
+    overflow: visible;   /* ← 重要：下にはみ出してOK */
+}
+
+
+#tree {
+    position: absolute;
+    top: -200px;          /* ← 葉を上に持ってくる */
+    left: 50%;
+    transform: translateX(-50%) scale(1.75); /* ← 大きく */
+    transform-origin: top center;
+
+    width: 100%;
+    height: auto;
+    z-index: -1;
+}
+
 
 #grid {
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: var(--grid-top, -100px);
+
+    left: 50%;
+    transform: translateX(-50%);
+
     display: grid;
-    /* 動的変更用CSS変数 */
+
     grid-template-columns: repeat(var(--cols, 3), 1fr);
     grid-template-rows: repeat(var(--rows, 3), 1fr);
     gap: clamp(2px, 0.8vw, 4px);
-    /* 正方形を保ちつつ最大化 */
-    width: min(90vw, 90vh, 600px);
-    height: min(90vw, 90vh, 600px);
-    margin: 20px auto;
-    background: #333;
+
+    width: min(90vw, 70vh, var(--grid-max, 520px));
+    aspect-ratio: 1 / 1;
+
     padding: clamp(6px, 1.5vw, 8px);
-    border-radius: 10px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(2px);
+
     justify-content: center;
     align-content: center;
+
+    z-index: 2;
 }
+
 
 /* セルサイズをグリッドに合わせる */
 .cell {
@@ -82,12 +118,20 @@ h1 {
 }
 
 .cell {
-    background: white;
+    background: rgba(255, 255, 255, 0.30);
 }
 
 .cell.empty {
-    background: #eee;
+    background: rgba(255, 255, 255, 0.30);
     /* 文字を削除、完全に空の状態に */
+}
+
+.cell.disabled {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    pointer-events: none;
+    opacity: 0.15;
 }
 
 .item {
@@ -100,7 +144,7 @@ h1 {
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: currentColor;
+    background-color: transparent;
 
     /* マスク共通 */
     -webkit-mask-repeat: no-repeat;
@@ -117,6 +161,8 @@ h1 {
 .color-blue { background:#1e88e5; }
 .color-green { background:#43a047; }
 .color-gold { background:gold; }
+.color-orange { background:rgb(255, 166, 0); }
+
 
 /* 模様 */
 /* ===== 模様：ストライプ ===== */

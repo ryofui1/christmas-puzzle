@@ -20,9 +20,10 @@ class PuzzleSet {
             { color: 'red', pattern: 'dot',    shape: 'star' },
             { color: 'red', pattern: 'none',  shape: 'square' }
         ]),
-        new PuzzleProblem("中級 3x3", 3, 3, [
+        new PuzzleProblem("中級 4x4", 4, 4, [
             {color: 'red', pattern: 'stripe', shape: 'square'},
             {color: 'red', pattern: 'none', shape: 'star'},
+            {color: 'red', pattern: 'dot', shape: 'circle'},
             {color: 'red', pattern: 'dot', shape: 'circle'}
         ]),
         new PuzzleProblem("上級 5x5", 5, 5, [
@@ -42,6 +43,14 @@ class PuzzleSet {
         return this.problems.length;
     }
 }
+
+const INVALID_MASKS = {
+    3: new Set([0,2]),
+    4: new Set([0,3,4,7]),
+    5: new Set([0,1,3,4,5,9]),
+};
+
+
 
 
 class ColorPuzzle {
@@ -70,6 +79,7 @@ class ColorPuzzle {
         this.draggedType = null;
         this.draggedIndex = -1;
         this.isMaxScoreFixed = false;
+        this.disabledCells=INVALID_MASKS[this.cols];
        
         // ✅ グローバル登録
         window.currentPuzzle = this;
@@ -192,7 +202,11 @@ class ColorPuzzle {
         };
     }
 
-
+    isDisabledCell(row, col) {
+        const mask = INVALID_MASKS[this.rows];
+        if (!mask) return false;
+        return mask[row]?.[col] === 1;
+    }
 
     countRun(grid, row, col, attr, value, dr, dc) {
         let len = 1;
@@ -519,6 +533,13 @@ class ColorPuzzle {
             cell.className = 'cell';
             cell.dataset.index = index;
 
+            if (this.disabledCells.has(index)) {
+                cell.classList.add('disabled');
+                gridEl.appendChild(cell);
+                return; // ← ここで終了
+            }
+
+
             if (item) {
                 cell.draggable = true;
                 cell.innerHTML = `
@@ -614,8 +635,10 @@ attachEvents() {
 
 
     handleDrop(e) {
+        
         e.preventDefault();
-
+        const index = Number(e.currentTarget.dataset.index);
+        if (this.disabledCells.has(index)) return;
         if (
             this.draggedIndex === -1 ||
             Number.isNaN(this.draggedIndex) ||
@@ -645,7 +668,8 @@ attachEvents() {
         }
        
         if (this.draggedType === 'grid' && targetCell) {
-            const targetIndex = parseInt(targetCell.dataset.index);
+            const targetIndex = parseInt(e.currentTarget.dataset.index);
+
             if (this.grid[targetIndex] === null) {
                 [this.grid[this.draggedIndex], this.grid[targetIndex]] =
                 [this.grid[targetIndex], this.grid[this.draggedIndex]];
@@ -831,6 +855,7 @@ attachEvents() {
         document.getElementById("score-value").textContent = score;
         console.log(this.grid);
         console.log(this.calculateScoreForGrid(this.grid));
+        this.checkClear();
     }
 
 
