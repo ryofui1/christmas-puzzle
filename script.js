@@ -80,6 +80,10 @@ class ColorPuzzle {
         this.draggedIndex = -1;
         this.isMaxScoreFixed = false;
         this.disabledCells=INVALID_MASKS[this.cols];
+        this.isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+        this.selectedItemIndex = null;
+        this.selectedFromGridIndex = null;
        
         // ✅ グローバル登録
         window.currentPuzzle = this;
@@ -547,11 +551,44 @@ class ColorPuzzle {
                 `;
             }
 
+            if (this.isTouchDevice) {
+                cell.addEventListener('click', () => {
+                    this.handleCellTap(index);
+                });
+            }
+
             gridEl.appendChild(cell);
         });
     }
 
+    updateSelectionUI() {
+        document.querySelectorAll('.item').forEach(el => {
+            el.classList.toggle(
+                'selected',
+                Number(el.dataset.itemIndex) === this.selectedItemIndex
+            );
+        });
 
+        document.querySelectorAll('.cell').forEach(el => {
+            el.classList.toggle(
+                'selected',
+                Number(el.dataset.index) === this.selectedFromGridIndex
+            );
+        });
+    }
+
+
+    selectItemFromBar(index) {
+        this.selectedItemIndex = index;
+        this.selectedFromGridIndex = null;
+        this.updateSelectionUI();
+    }
+
+    handleDragStartFromBar(e) {
+        const index = Number(e.currentTarget.dataset.itemIndex);
+        this.draggedType = 'bar';
+        this.draggedIndex = index;
+    }
 
     renderItems() {
         const itemsEl = document.getElementById('items');
@@ -566,6 +603,15 @@ class ColorPuzzle {
                 <div class="ornament color-${item.color} pattern-${item.pattern} shape-${item.shape}"></div>
             `;
             // <div class="ornament color-red pattern-dot shape-star"></div>
+
+            if (this.isTouchDevice) {
+                el.addEventListener('click', () => {
+                    this.selectItemFromBar(index);
+                });
+            } else {
+                el.draggable = true;
+                el.addEventListener('dragstart', e => this.handleDragStartFromBar(e));
+            }
 
             itemsEl.appendChild(el);
         });
@@ -690,6 +736,41 @@ attachEvents() {
             return;
         }
     }
+
+    handleCellTap(index) {
+        // 無効セルは無視
+        if (this.disabledCells.has(index)) return;
+
+        // バーから選択されている場合 → 設置
+        if (this.selectedItemIndex !== null) {
+            if (this.grid[index] !== null) return;
+
+            this.grid[index] = this.items[this.selectedItemIndex];
+            this.items.splice(this.selectedItemIndex, 1);
+
+            this.selectedItemIndex = null;
+            this.renderAll();
+            return;
+        }
+
+        // グリッド上の飾りを選択
+        if (this.grid[index]) {
+            this.selectedFromGridIndex = index;
+            this.selectedItemIndex = null;
+            this.updateSelectionUI();
+            return;
+        }
+
+        // グリッド → グリッドの移動
+        if (this.selectedFromGridIndex !== null && this.grid[index] === null) {
+            this.grid[index] = this.grid[this.selectedFromGridIndex];
+            this.grid[this.selectedFromGridIndex] = null;
+
+            this.selectedFromGridIndex = null;
+            this.renderAll();
+        }
+    }
+
 
 
     renderAllNoMaxRecalc() {
