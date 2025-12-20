@@ -1,0 +1,371 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f0f0f0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    margin-bottom: 10px;
+}
+
+#score {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+#reset {
+    padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 25px);
+    font-size: clamp(14px, 3vw, 16px);
+    background: #FF9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#reset:hover {
+    background: #F57C00;
+}
+
+
+#grid {
+    display: grid;
+    /* 動的変更用CSS変数 */
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
+    grid-template-rows: repeat(var(--rows, 3), 1fr);
+    gap: clamp(2px, 0.8vw, 4px);
+    /* 正方形を保ちつつ最大化 */
+    width: min(90vw, 90vh, 600px);
+    height: min(90vw, 90vh, 600px);
+    margin: 20px auto;
+    background: #333;
+    padding: clamp(6px, 1.5vw, 8px);
+    border-radius: 10px;
+    justify-content: center;
+    align-content: center;
+}
+
+/* セルサイズをグリッドに合わせる */
+.cell {
+    aspect-ratio: 1;
+    min-height: 0; /* flexアイテムの伸縮を許可 */
+}
+
+
+.cell, .item {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.cell:hover, .item:hover {
+    transform: scale(1.05);
+}
+
+.cell {
+    background: white;
+}
+
+.cell.empty {
+    background: #eee;
+    /* 文字を削除、完全に空の状態に */
+}
+
+.item {
+    width: clamp(60px, 18vw, 80px);
+    background: white;
+    cursor: grab;
+}
+
+.ornament {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+
+    /* マスク共通 */
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+
+            mask-repeat: no-repeat;
+            mask-position: center;
+            mask-size: contain;
+}
+
+/* 色 */
+.color-red { background:#e53935; }
+.color-blue { background:#1e88e5; }
+.color-green { background:#43a047; }
+.color-gold { background:gold; }
+
+/* 模様 */
+/* ===== 模様：ストライプ ===== */
+.pattern-stripe::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.4),
+        rgba(255,255,255,0.4) 6px,
+        transparent 6px,
+        transparent 12px
+    );
+    z-index: 1;
+}
+
+/* ===== 模様：ドット ===== */
+.pattern-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(#fff 1px, transparent 1px);
+    background-size: 6px 6px;
+}
+
+/* 形 */
+.shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+.shape-circle {
+    -webkit-mask-image: url("images/circle.png");
+            mask-image: url("images/circle.png");
+}
+
+.shape-square {
+    -webkit-mask-image: url("images/square.png");
+            mask-image: url("images/square.png");
+}
+
+.shape-triangle {
+    -webkit-mask-image: url("images/triangle.png");
+            mask-image: url("images/triangle.png");
+}
+
+.shape-star {
+    -webkit-mask-image: url("images/star.png");
+            mask-image: url("images/star.png");
+}
+
+.shape-snowman {
+    -webkit-mask-image: url("images/snowman.png");
+            mask-image: url("images/snowman.png");
+}
+
+.shape-light {
+    -webkit-mask-image: url("images/light.png");
+            mask-image: url("images/light.png");
+}
+
+
+
+
+#max-score {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: #2196F3;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+#item-bar {
+    margin: 20px 0;
+    padding: clamp(10px, 3vw, 15px);
+    background: #ddd;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(5px, 2vw, 10px);
+}
+
+#items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(5px, 2vw, 10px);
+    justify-content: center;
+    max-width: min(400px, 90vw);
+}
+
+@media (min-width: 768px) {
+    #item-bar {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    #items {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+}
+
+
+button {
+    padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 25px);
+    font-size: clamp(14px, 3vw, 16px);
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+/* 前回のCSSに以下を追加 */
+.progress {
+    margin: 10px 0;
+}
+
+#level {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: #FF9800;
+    margin: 5px 0;
+}
+
+.clear-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease;
+}
+
+.clear-screen.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.clear-screen.hidden {
+    display: none;
+}
+
+.clear-content {
+    text-align: center;
+    color: white;
+    background: rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.clear-content h2 {
+    font-size: clamp(2rem, 8vw, 3rem);
+    margin: 0 0 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.star-animation {
+    font-size: 4rem;
+    margin: 20px 0;
+    animation: starPulse 1s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+}
+
+.clear-content p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+/* 前回のCSS + 以下追加 */
+.completion-image-container {
+    margin: 20px 0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+#completion-canvas {
+    background: white;
+    border: 5px solid #333;
+    display: block;
+}
+
+.clear-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#download-btn, #next-level-btn {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    min-width: 140px;
+}
+
+#download-btn {
+    background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+    color: white;
+}
+
+#download-btn:hover {
+    background: linear-gradient(45deg, #FF5252, #FF6B6B);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+}
+
+#next-level-btn {
+    background: linear-gradient(45deg, #4CAF50, #66BB6A);
+    color: white;
+}
+
+#next-level-btn:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76,175,80,0.4);
+}
+
+.clear-content h2 {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: clamp(2rem, 8vw, 3.5rem) !important;
+    margin-bottom: 15px;
+}

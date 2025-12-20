@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3x3 Color Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="problem-title">3x3 カラー パズル</h1>
+        <div class="progress">
+            <div id="score">得点: <span id="score-value">0</span></div>
+            <div id="max-score">最大可能得点: <span id="max-score-value">0</span></div>
+            <div id="level">問題 <span id="level-value">1</span></div>
+        </div>
+        <div id="grid"></div>
+        <div id="item-bar">
+            <div id="items"></div>
+        </div>
+        <button id="reset">リセット</button>
+
+        
+        <!-- 🎉 新しい完成画面 -->
+        <div id="clear-screen" class="clear-screen hidden">
+            <div class="clear-content">
+                <h2>🎉 完璧クリア！ 🎉</h2>
+                <div class="completion-image-container">
+                    <canvas id="completion-canvas" width="400" height="400"></canvas>
+                </div>
+                <p>得点: <span id="clear-score">0</span> / <span id="clear-max">0</span></p>
+                <!-- クリア画面ボタン -->
+
+                <div class="clear-buttons">
+                    <button id="download-btn">解答ダウンロード</button>
+                    <button id="next-level-btn">次の問題</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
