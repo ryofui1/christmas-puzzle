@@ -1,3 +1,4 @@
+<!-- python -m http.server 8000 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3x3 Color Puzzle</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1 id="problem-title">3x3 カラー パズル</h1>
-        <div class="progress">
-            <div id="score">得点: <span id="score-value">0</span></div>
-            <div id="max-score">最大可能得点: <span id="max-score-value">0</span></div>
-            <div id="level">問題 <span id="level-value">1</span></div>
+        <div id="star-score" aria-label="score">
+            <!-- JSで ★☆☆ を生成 -->
         </div>
         <div id="play-area">
             <div id="tree-container">
@@ -27,21 +27,24 @@
 
         
         <!-- 🎉 新しい完成画面 -->
-        <div id="clear-screen" class="clear-screen hidden">
-            <div class="clear-content">
-                <h2>🎉 完璧クリア！ 🎉</h2>
-                <div class="completion-image-container">
-                    <canvas id="completion-canvas" width="400" height="400"></canvas>
-                </div>
-                <p>得点: <span id="clear-score">0</span> / <span id="clear-max">0</span></p>
-                <!-- クリア画面ボタン -->
+        <div id="clear-screen" class="hidden">
+            <div class="clear-box">
+                <p class="clear-title">完成！🎄</p>
+                <button id="next-btn">次の問題へ →</button>
+            </div>
+        </div>
+        <div id="all-clear-screen" hidden>
+            <div class="clear-box">
+                <h2>🎄 ALL CLEAR 🎄</h2>
+                <p>すべてのツリーを完成させました！</p>
 
-                <div class="clear-buttons">
-                    <button id="download-btn">解答ダウンロード</button>
-                    <button id="next-level-btn">次の問題</button>
+                <div class="all-clear-image">
+                    <img src="images/circle.png" alt="Christmas Tree">
                 </div>
             </div>
         </div>
+
+
     </div>
     <script src="script.js"></script>
 </body>

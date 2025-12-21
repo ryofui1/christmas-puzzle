@@ -11,6 +11,14 @@ class PuzzleProblem {
     }
 }
 
+const shapeImgMap = {
+    circle: 'images/circle.png',
+    square: 'images/square.png',
+    star: 'images/star.png',
+    triangle: 'images/triangle.png',
+    snowman: 'images/snowman.png',
+    light: 'images/light.png'
+};
 
 // ✅ 問題セット管理クラス
 class PuzzleSet {
@@ -50,9 +58,6 @@ const INVALID_MASKS = {
     5: new Set([0,1,3,4,5,9]),
 };
 
-
-
-
 class ColorPuzzle {
     static ATTRS = ['color', 'pattern', 'shape'];
     constructor(problemIndex = 0) {
@@ -84,6 +89,8 @@ class ColorPuzzle {
 
         this.selectedItemIndex = null;
         this.selectedFromGridIndex = null;
+
+        this.isClearPending = false;
        
         // ✅ グローバル登録
         window.currentPuzzle = this;
@@ -107,11 +114,22 @@ class ColorPuzzle {
 
 
     init() {
+        const clearScreen = document.getElementById('clear-screen');
+        if (clearScreen) {
+            clearScreen.classList.add('hidden');
+            clearScreen.classList.remove('show');
+            clearScreen.hidden=true;
+        }
+        const clear = document.getElementById('clear-screen');
+        const allClear = document.getElementById('all-clear-screen');
+
+        if (clear) clear.hidden = true;
+        if (allClear) allClear.hidden = true;
         document.querySelector('h1').textContent = `${this.problem.name}`;
-        document.getElementById('level-value').textContent = this.problemIndex + 1;
+        // document.getElementById('level-value').textContent = this.problemIndex + 1;
 
         this.maxScore = this.calculateMaxScore();
-        document.getElementById('max-score-value').textContent = this.maxScore;
+        // document.getElementById('max-score-value').textContent = this.maxScore;
         this.isMaxScoreFixed = true;
 
         // ★ ここが追加部分
@@ -434,72 +452,60 @@ class ColorPuzzle {
         }
     }
 
-
     showClearScreen() {
-        console.log('クリア画面表示');
-        const clearScreen = document.getElementById('clear-screen');
-        const clearScore = document.getElementById('clear-score');
-        const clearMax = document.getElementById('clear-max');
-       
-        clearScore.textContent = this.score;
-        clearMax.textContent = this.maxScore;
-        this.renderPlayerSolutionImage();
-       
-        clearScreen.classList.remove('hidden');
-        clearScreen.classList.add('show');
+        const clear = document.getElementById('clear-screen');
+        clear.classList.remove('hidden');
+        clear.hidden = false;
     }
+
 
 
     renderPlayerSolutionImage() {
-        const canvas = document.getElementById('completion-canvas');
-        const ctx = canvas.getContext('2d');
-        const cellSize = Math.min(400 / Math.max(this.rows, this.cols), 100);
-        const padding = (400 - this.rows * cellSize * 0.9) / 2;
-       
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#f8f9fa';
-        ctx.fillRect(0, 0, 400, 400);
-       
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                const index = this.getIndex(row, col);
-                const item = this.grid[index];
-                const x = col * cellSize + padding;
-                const y = row * cellSize + padding;
-               
-                if (item) {
-                    ctx.fillStyle = item.color;
-                    ctx.fillRect(x, y, cellSize, cellSize / 3);
-                    ctx.fillStyle = item.pattern;
-                    ctx.fillRect(x, y + cellSize / 3, cellSize, cellSize / 3);
-                    ctx.fillStyle = item.shape;
-                    ctx.fillRect(x, y + 2 * cellSize / 3, cellSize, cellSize / 3);
-                   
-                    ctx.strokeStyle = '#ddd';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(x, y + cellSize / 3);
-                    ctx.lineTo(x + cellSize, y + cellSize / 3);
-                    ctx.moveTo(x, y + 2 * cellSize / 3);
-                    ctx.lineTo(x + cellSize, y + 2 * cellSize / 3);
-                    ctx.stroke();
-                } else {
-                    ctx.fillStyle = '#eee';
-                    ctx.fillRect(x, y, cellSize, cellSize);
-                }
-               
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(x, y, cellSize, cellSize);
-            }
+        const target = document.getElementById('tree-container'); 
+        // ↑ tree + grid + ornaments を包んでいる要素
+
+        console.log('capture target:', target);
+
+        if (!target) {
+            console.error('❌ play-area が見つかりません');
+            return;
         }
-       
-        ctx.fillStyle = '#333';
-        ctx.font = `bold ${Math.min(24, cellSize / 3)}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'patterndle';
-        ctx.fillText(`${this.rows}x${this.cols} 問題 ${this.level} あなたの解答`, 200, 20);
+
+        html2canvas(target, {
+            backgroundColor: null,
+            scale: 1,useCORS: true
+        }).then(canvas => {
+            // const resultCanvas = document.getElementById('completion-canvas');
+            // const ctx = resultCanvas.getContext('2d');
+
+            resultCanvas.width = canvas.width;
+            resultCanvas.height = canvas.height;
+
+            ctx.drawImage(canvas, 0, 0);
+        });
     }
+
+
+    scheduleClearCheck() {
+        if (this.score !== this.maxScore || this.score === 0) return;
+        if (this.isClearPending) return;
+
+        this.isClearPending = true;
+
+        const STAR_ANIMATION_TIME = 600;
+
+        setTimeout(async () => {
+            // ★ 先に画像を作る
+            // await this.renderPlayerSolutionImage();
+
+            // ★ その後で表示
+            this.showClearScreen();
+
+            this.isClearPending = false;
+        }, STAR_ANIMATION_TIME);
+    }
+
+
 
 
     downloadCompletion() {
@@ -540,7 +546,7 @@ class ColorPuzzle {
             if (this.disabledCells.has(index)) {
                 cell.classList.add('disabled');
                 gridEl.appendChild(cell);
-                return; // ← ここで終了
+                return;
             }
 
 
@@ -672,10 +678,8 @@ attachEvents() {
 
 
         // ✅ クリア画面ボタン（事前登録）
-        const nextBtn = document.getElementById('next-level-btn');
-        const downloadBtn = document.getElementById('download-btn');
+        const nextBtn = document.getElementById('next-btn');
         if (nextBtn) nextBtn.onclick = () => this.nextProblem();
-        if (downloadBtn) downloadBtn.onclick = () => this.downloadCompletion();
 }
 
 
@@ -822,7 +826,7 @@ attachEvents() {
         console.log(`問題${this.problemIndex + 1} → 問題${this.problemIndex + 2}`);
         
         // ✅ 全問題クリア判定
-        if (this.problemIndex === 2) {  // 問題3クリア時
+        if (this.problemIndex === PuzzleSet.getProblemCount() - 1) {  // 問題3クリア時
             this.showAllClearScreen();
             return;
         }
@@ -840,28 +844,22 @@ attachEvents() {
         setTimeout(() => {
             new ColorPuzzle((this.problemIndex + 1) % 3);
         }, 100);
+        // this.updateMaxScore();
+        document.getElementById('clear-screen').classList.add('hidden');
     }
 
     // ✅ 新規追加: 全クリア画面
     showAllClearScreen() {
-        const clearScreen = document.getElementById('clear-screen');
-        const clearScore = document.getElementById('clear-score');
-        const clearMax = document.getElementById('clear-max');
-        
-        clearScore.textContent = '全問題';
-        clearMax.textContent = 'クリア！';
-        
-        // 全クリア用キャンバス（お祝い画像）
-        this.renderAllClearImage();
-        
-        clearScreen.classList.remove('hidden');
-        clearScreen.classList.add('show');
-        
-        // ボタン文言変更
-        document.getElementById('download-btn').textContent = '全クリア保存';
-        document.getElementById('next-level-btn').textContent = '最初から';
-        document.getElementById('next-level-btn').onclick = () => this.restartFromBeginning();
+        console.log("clear");
+        const screen = document.getElementById('all-clear-screen');
+        if (!screen) {
+            console.warn('all-clear-screen が見つかりません');
+            return;
+        }
+
+        screen.hidden = false;
     }
+
 
     // ✅ 新規追加: 最初からリスタート
     restartFromBeginning() {
@@ -929,22 +927,58 @@ attachEvents() {
     }
 
 
+    updateStarScore(score, maxScore) {
+        const el = document.getElementById('star-score');
+
+        // 前回スコアを保持
+        const prevScore = this.prevScore ?? 0;
+        this.prevScore = score;
+
+        el.innerHTML = '';
+
+        for (let i = 0; i < maxScore; i++) {
+            const span = document.createElement('span');
+            span.classList.add('star');
+
+            if (i < score) {
+                span.textContent = '★';
+                span.classList.add('filled');
+
+                // ★が「新しく増えた」場合だけ
+                if (i >= prevScore) {
+                    span.classList.add('pop');
+                }
+            } else {
+                span.textContent = '☆';
+            }
+
+            el.appendChild(span);
+        }
+    }
+
 
     updateScore() {
         const score = this.calculateScoreForGrid(this.grid);
         this.score = score;
-        document.getElementById("score-value").textContent = score;
+        // document.getElementById("score-value").textContent = score;
         console.log(this.grid);
         console.log(this.calculateScoreForGrid(this.grid));
-        this.checkClear();
+        this.scheduleClearCheck();
+
+
+        // const score = this.calculateScoreForGrid(this.grid);
+        const max = this.maxScore;
+        this.updateStarScore(score, max);
+
     }
 
 
     updateMaxScore() {
         // ✅ 問題データ時は常に表示済みのmaxScoreを使用
-        if (this.maxScore > 0) {
-            document.getElementById('max-score-value').textContent = this.maxScore;
-        }
+        // if (this.maxScore > 0) {
+        //     document.getElementById('max-score-value').textContent = this.maxScore;
+        // }
+        
     }
 
 
@@ -975,3 +1009,4 @@ if (saved) {
 } else {
     new ColorPuzzle(0);
 }
+
