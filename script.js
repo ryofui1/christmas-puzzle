@@ -680,9 +680,23 @@ attachEvents() {
         // ✅ クリア画面ボタン（事前登録）
         const nextBtn = document.getElementById('next-btn');
         if (nextBtn) nextBtn.onclick = () => this.nextProblem();
+
+        const startBtn = document.getElementById('start-btn');
+        if (startBtn) startBtn.onclick = () => this.hideAllOverlays();
 }
 
+    hideAllOverlays() {
+        const ids = [
+            'rule-screen',
+            'clear-screen',
+            'all-clear-screen'
+        ];
 
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.hidden = true;
+        });
+    }
 
     handleDrop(e) {
         

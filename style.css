@@ -472,6 +472,42 @@ button:hover {
     justify-content: center;
 }
 
+#rule-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 10000; /* all-clear と同等かそれ以上 */
+}
+
+#rule-screen[hidden] {
+    display: none;
+}
+
+.rule-box {
+    background: rgba(255,255,255,0.95);
+    padding: 28px 30px;
+    border-radius: 18px;
+    text-align: center;
+    max-width: min(90vw, 360px);
+
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+.rule-box h2 {
+    margin-bottom: 12px;
+}
+
+.rule-box p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+
 #download-btn, #next-level-btn {
     padding: 12px 25px;
     font-size: 1.1rem;
