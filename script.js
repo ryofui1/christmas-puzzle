@@ -79,11 +79,11 @@ class PuzzleSet { // circle star square triangle snowman light
         ]),
         new PuzzleProblem("7問目 彗星", 4, 4, 3, [
             {color: 'red', pattern: 'dot', shape: 'star'},
-            {color: 'red', pattern: 'none', shape: 'snowman'},
+            {color: 'red', pattern: 'check', shape: 'snowman'},
             {color: 'blue', pattern: 'stripe', shape: 'square'},
-            {color: 'blue', pattern: 'none', shape: 'star'},
+            {color: 'blue', pattern: 'check', shape: 'star'},
             {color: 'blue', pattern: 'stripe', shape: 'triangle'},
-            {color: 'green', pattern: 'none', shape: 'circle'},
+            {color: 'green', pattern: 'check', shape: 'circle'},
             {color: 'green', pattern: 'dot', shape: 'star'},
         ]),
         new PuzzleProblem("8問目 星三つ", 5, 5,3, [
@@ -103,7 +103,7 @@ class PuzzleSet { // circle star square triangle snowman light
             {color: 'aqua', pattern: 'none', shape: 'star'},
             {color: 'pink', pattern: 'dot', shape: 'star'},
         ]),
-        new PuzzleProblem("最終問題:10問目 ヤギみたい(?)", 5, 5,6, [
+        new PuzzleProblem("最終問題:10問目 ヤギ座みたい(?)", 5, 5,6, [
             {color: 'red', pattern: 'check', shape: 'circle'},
             {color: 'red', pattern: 'stripe', shape: 'triangle'},
             {color: 'green', pattern: 'dot', shape: 'circle'},
