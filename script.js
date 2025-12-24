@@ -1,15 +1,26 @@
+function shuffleArray(array) {
+    const a = [...array];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 
 
 // ✅ 問題定義クラス
 class PuzzleProblem {
-    constructor(name, width,height, items) {
+    constructor(name, width,height,maxscore, items) {
         this.name = name;
         this.width = width;
         this.height=height;
-        this.items = items; // [{color, pattern, shape}, ...]
+        this.maxscore = maxscore;
+        // this.maxScore=maxScore;
+        this.items = shuffleArray(items); // [{color, pattern, shape}, ...]
         this.maxScore = 0; // 自動計算
     }
-}
+    }
 
 const shapeImgMap = {
     circle: 'images/circle.png',
@@ -21,27 +32,119 @@ const shapeImgMap = {
 };
 
 // ✅ 問題セット管理クラス
-class PuzzleSet {
+class PuzzleSet { // circle star square triangle snowman light
     static problems = [
-        new PuzzleProblem("基本問題 3x3", 3, 3, [
+        new PuzzleProblem("1問目 赤の直線", 3, 3,1, [
             { color: 'red', pattern: 'stripe', shape: 'circle' },
             { color: 'red', pattern: 'dot',    shape: 'star' },
             { color: 'red', pattern: 'none',  shape: 'square' }
         ]),
-        new PuzzleProblem("中級 4x4", 4, 4, [
-            {color: 'red', pattern: 'stripe', shape: 'square'},
-            {color: 'red', pattern: 'none', shape: 'star'},
-            {color: 'red', pattern: 'dot', shape: 'circle'},
-            {color: 'red', pattern: 'dot', shape: 'circle'}
+        new PuzzleProblem("2問目 星二つ", 3, 3,2, [
+            { color: 'red', pattern: 'dot', shape: 'triangle' },
+            { color: 'blue', pattern: 'dot',    shape: 'triangle' },
+            { color: 'green', pattern: 'none',  shape: 'triangle' },
+            { color: 'green', pattern: 'stripe', shape: 'circle' },
+            { color: 'red', pattern: 'stripe',    shape: 'square' },
+            { color: 'yellow', pattern: 'stripe',  shape:  'snowman'}
         ]),
-        new PuzzleProblem("上級 5x5", 5, 5, [
+        new PuzzleProblem("3問目 ドラキュラが嫌がる形", 3, 3,2, [
+            { color: 'green', pattern: 'dot', shape: 'light' },
+            { color: 'red', pattern: 'stripe',    shape: 'triangle' },
+            { color: 'red', pattern: 'stripe',  shape: 'light' },
+            { color: 'red', pattern: 'none', shape: 'circle' },
+            { color: 'blue', pattern: 'none',    shape: 'light' },
+        ]),
+        new PuzzleProblem("4問目 3つあるもの", 3, 3, 3, [
+            { color: 'red', pattern: 'dot', shape: 'triangle' },
+            { color: 'green', pattern: 'none',    shape: 'circle' },
+            { color: 'green', pattern: 'dot',  shape: 'light' },
+            { color: 'green', pattern: 'stripe', shape: 'triangle' },
+            { color: 'yellow', pattern: 'stripe',    shape: 'square' },
+            { color: 'red', pattern: 'dot',    shape: 'square' },
+            { color: 'blue', pattern: 'none',    shape: 'square' },
+        ]),
+        new PuzzleProblem("5問目 3つがあれば1点", 4, 4, 2, [
+            {color: 'yellow', pattern: 'stripe', shape: 'circle'},
+            {color: 'yellow', pattern: 'none', shape: 'square'},
+            {color: 'yellow', pattern: 'dot', shape: 'triangle'},
+            {color: 'yellow', pattern: 'none', shape: 'star'},
+        ]),
+        new PuzzleProblem("6問目 何だろうと3つあれば1点", 4, 4, 3, [
+            {color: 'yellow', pattern: 'stripe', shape: 'square'},
+            {color: 'blue', pattern: 'stripe', shape: 'triangle'},
+            {color: 'blue', pattern: 'dot', shape: 'star'},
+            {color: 'red', pattern: 'stripe', shape: 'star'},
+            {color: 'red', pattern: 'dot', shape: 'star'},
+            {color: 'red', pattern: 'none', shape: 'square'},
+        ]),
+        new PuzzleProblem("7問目 彗星", 4, 4, 3, [
+            {color: 'red', pattern: 'dot', shape: 'star'},
+            {color: 'red', pattern: 'none', shape: 'snowman'},
+            {color: 'blue', pattern: 'stripe', shape: 'square'},
+            {color: 'blue', pattern: 'none', shape: 'star'},
+            {color: 'blue', pattern: 'stripe', shape: 'triangle'},
+            {color: 'green', pattern: 'none', shape: 'circle'},
+            {color: 'green', pattern: 'dot', shape: 'star'},
+        ]),
+        new PuzzleProblem("8問目 星三つ", 5, 5,3, [
             {color: 'red', pattern: 'stripe', shape: 'circle'},
             {color: 'blue', pattern: 'dot', shape: 'circle'},
             {color: 'blue', pattern: 'dot', shape: 'square'},
             {color: 'blue', pattern: 'none', shape: 'star'},
             {color: 'orange', pattern: 'dot', shape: 'circle'}
-        ])
-    ];
+        ]),
+        new PuzzleProblem("9問目 カラフル", 5, 5,4, [
+            {color: 'red', pattern: 'stripe', shape: 'circle'},
+            {color: 'blue', pattern: 'none', shape: 'circle'},
+            {color: 'green', pattern: 'dot', shape: 'circle'},
+            {color: 'yellow', pattern: 'stripe', shape: 'snowman'},
+            {color: 'orange', pattern: 'dot', shape: 'square'},
+            {color: 'purple', pattern: 'stripe', shape: 'star'},
+            {color: 'aqua', pattern: 'none', shape: 'star'},
+            {color: 'pink', pattern: 'dot', shape: 'star'},
+        ]),
+        new PuzzleProblem("最終問題:10問目 ヤギみたい(?)", 5, 5,6, [
+            {color: 'red', pattern: 'check', shape: 'circle'},
+            {color: 'red', pattern: 'stripe', shape: 'triangle'},
+            {color: 'green', pattern: 'dot', shape: 'circle'},
+            {color: 'red', pattern: 'stripe', shape: 'snowman'},
+            {color: 'blue', pattern: 'dot', shape: 'circle'},
+            {color: 'green', pattern: 'stripe', shape: 'square'},
+            {color: 'yellow', pattern: 'none', shape: 'square'},
+            {color: 'yellow', pattern: 'check', shape: 'square'},
+            {color: 'yellow', pattern: 'dot', shape: 'star'},
+        ]),
+
+
+
+        // new PuzzleProblem("中級 4x4", 4, 4,2 ,[
+        //     {color: 'red', pattern: 'stripe', shape: 'square'},
+        //     {color: 'red', pattern: 'none', shape: 'star'},
+        //     {color: 'red', pattern: 'dot', shape: 'circle'},
+        //     {color: 'red', pattern: 'dot', shape: 'circle'}
+        // ]),
+        // new PuzzleProblem("上級 5x5", 5, 5,3, [
+        //     {color: 'red', pattern: 'stripe', shape: 'circle'},
+        //     {color: 'blue', pattern: 'dot', shape: 'circle'},
+        //     {color: 'blue', pattern: 'dot', shape: 'square'},
+        //     {color: 'blue', pattern: 'none', shape: 'star'},
+        //     {color: 'orange', pattern: 'dot', shape: 'circle'}
+        // ]),
+        // new PuzzleProblem("上級 5x5（ランダム錯覚）", 5, 5,10, [
+        // { color: 'red',    pattern: 'none',   shape: 'circle' },
+        // { color: 'blue',   pattern: 'dot',    shape: 'circle' },
+        // { color: 'green',  pattern: 'stripe', shape: 'circle' },
+
+        // { color: 'red',    pattern: 'dot',    shape: 'square' },
+        // { color: 'blue',   pattern: 'none',   shape: 'square' },
+        // { color: 'orange', pattern: 'stripe', shape: 'square' },
+
+        // { color: 'green',  pattern: 'dot',    shape: 'star'   },
+        // { color: 'red',    pattern: 'stripe', shape: 'star'   },
+        // { color: 'blue',   pattern: 'dot',    shape: 'star'   }
+        // ]),
+
+        ];
    
     static getProblem(index) {
         return this.problems[index % this.problems.length];
@@ -128,7 +231,8 @@ class ColorPuzzle {
         document.querySelector('h1').textContent = `${this.problem.name}`;
         // document.getElementById('level-value').textContent = this.problemIndex + 1;
 
-        this.maxScore = this.calculateMaxScore();
+        // this.maxScore = this.calculateMaxScore();
+        this.maxScore = this.problem.maxscore;
         // document.getElementById('max-score-value').textContent = this.maxScore;
         this.isMaxScoreFixed = true;
 
@@ -206,7 +310,8 @@ class ColorPuzzle {
                     shape: this.colors[Math.floor(Math.random() * this.colors.length)]
                 });
             }
-            this.maxScore = this.calculateMaxScore();
+            // this.maxScore = this.calculateMaxScore();
+            this.maxScore = this.problem.maxScore;
             attempts++;
         } while (this.maxScore < 1 && attempts < 100);
     }
@@ -759,12 +864,24 @@ attachEvents() {
         // 無効セルは無視
         if (this.disabledCells.has(index)) return;
 
+        if (this.selectedFromGridIndex === index) {
+            this.selectedFromGridIndex = null;
+            this.updateSelectionUI();
+            return;
+        }
+
         // バーから選択されている場合 → 設置
         if (this.selectedItemIndex !== null) {
-            if (this.grid[index] !== null) return;
-
-            this.grid[index] = this.items[this.selectedItemIndex];
-            this.items.splice(this.selectedItemIndex, 1);
+            if (this.grid[index] === null) {
+                // 空マス → 設置
+                this.grid[index] = this.items[this.selectedItemIndex];
+                this.items.splice(this.selectedItemIndex, 1);
+            } else {
+                // 飾りあり → 交換
+                const temp = this.grid[index];
+                this.grid[index] = this.items[this.selectedItemIndex];
+                this.items[this.selectedItemIndex] = temp;
+            }
 
             this.selectedItemIndex = null;
             this.renderAll();
@@ -772,7 +889,7 @@ attachEvents() {
         }
 
         // グリッド上の飾りを選択
-        if (this.grid[index]) {
+        if (this.grid[index] && this.selectedFromGridIndex === null) {
             this.selectedFromGridIndex = index;
             this.selectedItemIndex = null;
             this.updateSelectionUI();
@@ -780,9 +897,19 @@ attachEvents() {
         }
 
         // グリッド → グリッドの移動
-        if (this.selectedFromGridIndex !== null && this.grid[index] === null) {
-            this.grid[index] = this.grid[this.selectedFromGridIndex];
-            this.grid[this.selectedFromGridIndex] = null;
+        if (this.selectedFromGridIndex !== null) {
+            const from = this.selectedFromGridIndex;
+
+            // 空マス → 移動
+            if (this.grid[index] === null) {
+                this.grid[index] = this.grid[from];
+                this.grid[from] = null;
+            }
+            // 飾りあり → 交換
+            else {
+                [this.grid[from], this.grid[index]] =
+                [this.grid[index], this.grid[from]];
+            }
 
             this.selectedFromGridIndex = null;
             this.renderAll();
@@ -856,7 +983,7 @@ attachEvents() {
         document.getElementById('items').innerHTML = '';
         
         setTimeout(() => {
-            new ColorPuzzle((this.problemIndex + 1) % 3);
+            new ColorPuzzle((this.problemIndex + 1) % PuzzleSet.getProblemCount());
         }, 100);
         // this.updateMaxScore();
         document.getElementById('clear-screen').classList.add('hidden');
@@ -942,6 +1069,7 @@ attachEvents() {
 
 
     updateStarScore(score, maxScore) {
+        
         const el = document.getElementById('star-score');
 
         // 前回スコアを保持
@@ -981,7 +1109,7 @@ attachEvents() {
 
 
         // const score = this.calculateScoreForGrid(this.grid);
-        const max = this.maxScore;
+        const max = this.problem.maxscore;
         this.updateStarScore(score, max);
 
     }

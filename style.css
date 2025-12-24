@@ -238,6 +238,10 @@ h1 {
 .color-blue { background:#1e88e5; }
 .color-green { background:#43a047; }
 .color-gold { background:gold; }
+.color-yellow { background:gold; }
+.color-purple { background:rgb(185, 19, 185); }
+.color-aqua { background:aqua; }
+.color-pink { background:rgb(255, 132, 204); }
 .color-orange { background:rgb(255, 166, 0); }
 
 
@@ -264,6 +268,17 @@ h1 {
     inset: 0;
     background-image: radial-gradient(#fff 1px, transparent 1px);
     background-size: 6px 6px;
+}
+/* ===== 模様：チェック柄 ===== */
+.pattern-check::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(0deg, rgba(255,255,255,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px);
+    background-size: 10px 10px;
+    z-index: 1;
 }
 
 /* 形 */
